@@ -60,5 +60,19 @@ namespace TestChipsAndJose
             // Assert
             Assert.AreEqual(expected, result);
         }
+
+        [TestMethod]
+        public void TestDealWithChips5()
+        {
+            // Array
+            int[] seats = { 2, 7, 4, 2, 4, 10, 5, 7, 2, 7 };
+            int expected = 16;
+
+            // Act
+            int result = new Jose().DealWithChips(seats);
+
+            // Assert
+            Assert.AreEqual(expected, result);
+        }
     }
 }
