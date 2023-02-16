@@ -30,43 +30,63 @@
             return index;
         }
 
-        private int SelectIndexOfNearbySeatWithSmallerChipsAmount(int[] seats,
-                                                                  int indexOfSeatWithBiggestChipsAmount,
-                                                                  int averageChipsAmount)
-        {
-            for (int i = 1; i < seats.Length / 2 + 1; i++)
-            {
-                int leftIndexOfNearbySeatWithSmallerChipsAmount = indexOfSeatWithBiggestChipsAmount - i;
-                if (leftIndexOfNearbySeatWithSmallerChipsAmount < 0)
-                    leftIndexOfNearbySeatWithSmallerChipsAmount += seats.Length;
-
-                int rightIndexOfNearbySeatWithSmallerChipsAmount = indexOfSeatWithBiggestChipsAmount + i;
-                if (rightIndexOfNearbySeatWithSmallerChipsAmount >= seats.Length)
-                    rightIndexOfNearbySeatWithSmallerChipsAmount -= seats.Length;
-                
-                if (seats[leftIndexOfNearbySeatWithSmallerChipsAmount] < averageChipsAmount
-                    && seats[leftIndexOfNearbySeatWithSmallerChipsAmount] < seats[rightIndexOfNearbySeatWithSmallerChipsAmount])
-                    return leftIndexOfNearbySeatWithSmallerChipsAmount;
-
-                if (seats[rightIndexOfNearbySeatWithSmallerChipsAmount] < averageChipsAmount
-                    && seats[rightIndexOfNearbySeatWithSmallerChipsAmount] < seats[leftIndexOfNearbySeatWithSmallerChipsAmount])
-                    return rightIndexOfNearbySeatWithSmallerChipsAmount;
-            }
-
-            return indexOfSeatWithBiggestChipsAmount;
-        }
-
-        private int CountDistance(int indexOfSeatWithBiggestChipsAmount,
-                                  int indexOfNearbySeatWithSmallerChipsAmount,
+        private int CountDistance(int indexOfSeat1,
+                                  int indexOfSeat2,
                                   int seatsAmount)
         {
-            int distance1 = Math.Abs(indexOfSeatWithBiggestChipsAmount - indexOfNearbySeatWithSmallerChipsAmount);
+            int distance1 = Math.Abs(indexOfSeat1 - indexOfSeat2);
             int distance2 = seatsAmount - distance1;
 
             if (distance1 < distance2)
                 return distance1;
 
             return distance2;
+        }
+
+        private int ChooseMorePriorityIndexOfSeatToTakeChips(int indexOfSeat1,
+                                                             int indexOfSeat2,
+                                                             int previousIndexOfSeatWithBiggestChipsAmount,
+                                                             int seatsAmount)
+        {
+            int distance1 = CountDistance(indexOfSeat1, previousIndexOfSeatWithBiggestChipsAmount, seatsAmount);
+            int distance2 = CountDistance(indexOfSeat2, previousIndexOfSeatWithBiggestChipsAmount, seatsAmount);
+
+            if (distance1 < distance2)
+                return indexOfSeat1;
+
+            return indexOfSeat2;
+        }
+
+        private int SelectIndexOfNearbySeatWithSmallerChipsAmount(int[] seats,
+                                                                  int indexOfSeatWithBiggestChipsAmount,
+                                                                  int firstIndexOfSeatWithBiggestChipsAmount,
+                                                                  int averageChipsAmount)
+        {
+            for (int i = 1; i < seats.Length / 2 + 1; i++)
+            {
+                int leftIndexOfNearbySeatWithSmallerChipsAmount = indexOfSeatWithBiggestChipsAmount - i;
+                while (leftIndexOfNearbySeatWithSmallerChipsAmount < 0)
+                    leftIndexOfNearbySeatWithSmallerChipsAmount += seats.Length;
+
+                int rightIndexOfNearbySeatWithSmallerChipsAmount = indexOfSeatWithBiggestChipsAmount + i;
+                while (rightIndexOfNearbySeatWithSmallerChipsAmount >= seats.Length)
+                    rightIndexOfNearbySeatWithSmallerChipsAmount -= seats.Length;
+
+                if (seats[leftIndexOfNearbySeatWithSmallerChipsAmount] < averageChipsAmount
+                    && seats[rightIndexOfNearbySeatWithSmallerChipsAmount] < averageChipsAmount)
+                    return ChooseMorePriorityIndexOfSeatToTakeChips(leftIndexOfNearbySeatWithSmallerChipsAmount,
+                                                                    rightIndexOfNearbySeatWithSmallerChipsAmount,
+                                                                    firstIndexOfSeatWithBiggestChipsAmount,
+                                                                    seats.Length);                
+                
+                if (seats[leftIndexOfNearbySeatWithSmallerChipsAmount] < averageChipsAmount)
+                    return leftIndexOfNearbySeatWithSmallerChipsAmount;
+
+                if (seats[rightIndexOfNearbySeatWithSmallerChipsAmount] < averageChipsAmount)
+                    return rightIndexOfNearbySeatWithSmallerChipsAmount;
+            }
+
+            return indexOfSeatWithBiggestChipsAmount;
         }
 
         private int CountChipsAmountToTransport(int biggestChipsAmount, int smallerChipsAmount, int averageChipsAmount)
@@ -87,6 +107,7 @@
 
             int movesAmount = 0;
             int averageChipsAmount = CountAverageChipsAmount(seats);
+            int firstIndexOfSeatWithBiggestChipsAmount = SelectIndexOfSeatWithBiggestChipsAmount(seats);
 
             while (true)
             {
@@ -100,9 +121,12 @@
                     int indexOfNearbySeatWithSmallerChipsAmount =
                         SelectIndexOfNearbySeatWithSmallerChipsAmount(seats,
                                                                       indexOfSeatWithBiggestChipsAmount,
+                                                                      firstIndexOfSeatWithBiggestChipsAmount,
                                                                       averageChipsAmount);
 
-                    int distanceCoefficient = CountDistance(indexOfSeatWithBiggestChipsAmount, indexOfNearbySeatWithSmallerChipsAmount, seats.Length);
+                    int distanceCoefficient = CountDistance(indexOfSeatWithBiggestChipsAmount,
+                                                            indexOfNearbySeatWithSmallerChipsAmount,
+                                                            seats.Length);
                     int chipsAmountToTransport = CountChipsAmountToTransport(seats[indexOfSeatWithBiggestChipsAmount],
                                                                              seats[indexOfNearbySeatWithSmallerChipsAmount],
                                                                              averageChipsAmount);
