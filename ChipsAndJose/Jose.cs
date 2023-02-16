@@ -135,6 +135,8 @@
                     seats[indexOfNearbySeatWithSmallerChipsAmount] += chipsAmountToTransport;
                     movesAmount += distanceCoefficient * chipsAmountToTransport;
                 }
+
+                previousIndexOfSeatWithBiggestChipsAmount = indexOfSeatWithBiggestChipsAmount;
             }
         }
     }
