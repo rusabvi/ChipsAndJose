@@ -45,11 +45,11 @@
 
         private int ChooseMorePriorityIndexOfSeatToTakeChips(int indexOfSeat1,
                                                              int indexOfSeat2,
-                                                             int previousIndexOfSeatWithBiggestChipsAmount,
+                                                             int firstIndexOfSeatWithBiggestChipsAmount,
                                                              int seatsAmount)
         {
-            int distance1 = CountDistance(indexOfSeat1, previousIndexOfSeatWithBiggestChipsAmount, seatsAmount);
-            int distance2 = CountDistance(indexOfSeat2, previousIndexOfSeatWithBiggestChipsAmount, seatsAmount);
+            int distance1 = CountDistance(indexOfSeat1, firstIndexOfSeatWithBiggestChipsAmount, seatsAmount);
+            int distance2 = CountDistance(indexOfSeat2, firstIndexOfSeatWithBiggestChipsAmount, seatsAmount);
 
             if (distance1 < distance2)
                 return indexOfSeat1;
